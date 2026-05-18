@@ -15,11 +15,22 @@ class _NbaPageState extends State<NbaPage> {
   //final
   List<Team> teams = [];
 
+  late Future<dynamic> teamData;
+
+  @override
+  void initState() {
+    super.initState();
+    teamData = getTeams();
+  }
+
   Future getTeams() async {
     final response = await http.get(
       Uri.https('api.balldontlie.io', '/nba/v1/games'),
       headers: {'Authorization': '690578ec-8536-44c0-8b23-fb435becb89c'},
     );
+    //clearing teams interms of rebuild
+    teams.clear();
+
     var jsonBody = jsonDecode(response.body);
     for (var game in jsonBody['data']) {
       final team = Team(
@@ -29,7 +40,6 @@ class _NbaPageState extends State<NbaPage> {
       teams.add(team);
     }
     print(teams.length);
-    print(response.body);
   }
 
   @override
@@ -37,7 +47,7 @@ class _NbaPageState extends State<NbaPage> {
     return Scaffold(
       appBar: AppBar(title: Text('Home'), centerTitle: true),
       body: FutureBuilder(
-        future: getTeams(),
+        future: teamData,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           //if connectionstate waiting
           if (snapshot.connectionState == ConnectionState.waiting) {
