@@ -33,7 +33,10 @@ class _NbaPageState extends State<NbaPage> {
 
     var jsonBody = jsonDecode(response.body);
     for (var game in jsonBody['data']) {
-      final team = Team(city: game['city'], abbreviation: game['abbreviation']);
+      final city = game['city'];
+      if (city == null || city.toString().isEmpty) continue;
+
+      final team = Team(city: city, abbreviation: game['abbreviation']);
       teams.add(team);
     }
     print(teams.length);
@@ -57,7 +60,12 @@ class _NbaPageState extends State<NbaPage> {
           return ListView.builder(
             itemCount: teams.length,
             itemBuilder: (BuildContext context, int index) {
-              return ListTile(title: Text(teams[index].city ?? 'Error'));
+              return ListTile(
+                title: Text(teams[index].city ?? 'Error'),
+
+                visualDensity: VisualDensity.compact,
+                subtitle: Text(teams[index].abbreviation ?? 'error'),
+              );
             },
           );
         },
