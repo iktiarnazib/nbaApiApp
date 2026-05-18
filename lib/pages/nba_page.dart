@@ -12,12 +12,6 @@ class NbaPage extends StatefulWidget {
 }
 
 class _NbaPageState extends State<NbaPage> {
-  @override
-  void initState() {
-    super.initState();
-    getTeams();
-  }
-
   //final
   List<Team> teams = [];
 
@@ -27,18 +21,45 @@ class _NbaPageState extends State<NbaPage> {
       headers: {'Authorization': '690578ec-8536-44c0-8b23-fb435becb89c'},
     );
     var jsonBody = jsonDecode(response.body);
-    for (var eachTeam in jsonBody['data']) {
+    for (var game in jsonBody['data']) {
       final team = Team(
-        city: eachTeam?['city'],
-        abbreviation: eachTeam?['abbreviation'],
+        city: game['home_team']['city'],
+        abbreviation: game['home_team']['abbreviation'],
       );
       teams.add(team);
     }
     print(teams.length);
+    print(response.body);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('Home'), centerTitle: true));
+    return Scaffold(
+      appBar: AppBar(title: Text('Home'), centerTitle: true),
+      body: FutureBuilder(
+        future: getTeams(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          //if connectionstate waiting
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          //if error
+          if (snapshot.hasError) {
+            return Center(
+              child: const Text('There has been an error, please try again'),
+            );
+          }
+
+          //if has data
+          return ListView.builder(
+            itemCount: teams.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(title: Text(teams[index].city ?? 'Error'));
+            },
+          );
+        },
+      ),
+    );
   }
 }
