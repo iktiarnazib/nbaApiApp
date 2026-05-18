@@ -15,7 +15,7 @@ class _NbaPageState extends State<NbaPage> {
   //final
   List<Team> teams = [];
 
-  late Future<dynamic> teamData;
+  late Future<void> teamData;
 
   @override
   void initState() {
@@ -23,9 +23,9 @@ class _NbaPageState extends State<NbaPage> {
     teamData = getTeams();
   }
 
-  Future getTeams() async {
+  Future<void> getTeams() async {
     final response = await http.get(
-      Uri.https('api.balldontlie.io', '/nba/v1/games'),
+      Uri.https('api.balldontlie.io', '/nba/v1/teams'),
       headers: {'Authorization': '690578ec-8536-44c0-8b23-fb435becb89c'},
     );
     //clearing teams interms of rebuild
@@ -33,10 +33,7 @@ class _NbaPageState extends State<NbaPage> {
 
     var jsonBody = jsonDecode(response.body);
     for (var game in jsonBody['data']) {
-      final team = Team(
-        city: game['home_team']['city'],
-        abbreviation: game['home_team']['abbreviation'],
-      );
+      final team = Team(city: game['city'], abbreviation: game['abbreviation']);
       teams.add(team);
     }
     print(teams.length);
@@ -49,19 +46,14 @@ class _NbaPageState extends State<NbaPage> {
       body: FutureBuilder(
         future: teamData,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          //if connectionstate waiting
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: const CircularProgressIndicator());
           }
 
-          //if error
           if (snapshot.hasError) {
-            return Center(
-              child: const Text('There has been an error, please try again'),
-            );
+            return Center(child: Text('Error'));
           }
 
-          //if has data
           return ListView.builder(
             itemCount: teams.length,
             itemBuilder: (BuildContext context, int index) {
