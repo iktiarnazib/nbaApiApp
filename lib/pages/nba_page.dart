@@ -45,7 +45,7 @@ class _NbaPageState extends State<NbaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home'), centerTitle: true),
+      appBar: AppBar(title: Text('NBA API'), centerTitle: true),
       body: FutureBuilder(
         future: teamData,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -60,11 +60,17 @@ class _NbaPageState extends State<NbaPage> {
           return ListView.builder(
             itemCount: teams.length,
             itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(teams[index].city ?? 'Error'),
-
-                visualDensity: VisualDensity.compact,
-                subtitle: Text(teams[index].abbreviation ?? 'error'),
+              return Container(
+                margin: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  title: Text(teams[index].city ?? 'Error'),
+                  visualDensity: VisualDensity.compact,
+                  subtitle: Text(teams[index].abbreviation ?? 'error'),
+                ),
               );
             },
           );
