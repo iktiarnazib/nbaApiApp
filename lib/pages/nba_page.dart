@@ -61,7 +61,7 @@ class _NbaPageState extends State<NbaPage> {
             itemCount: teams.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                margin: EdgeInsets.all(5),
+                margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(12),
